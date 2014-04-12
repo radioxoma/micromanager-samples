@@ -10,6 +10,15 @@ Micromanager project provides broad opportunity for constructing sophisticated i
 Unfortunately, MM documentation is lacks for detailed examples. It is not easy understand hardware capabilities and API logic. I hope those examples will be helpful in your journey, especially for live video acquisition.
 
 
+### Available samples
+
+[Numpy](http://www.scipy.org/index.html), [opencv](http://opencv.org) are used here.
+
+* Getting list of available properties and their allowed values
+* Video grabbing with opencv highgui
+* Efficient frame conversion with numpy (rgb32 to rgb, bgr)
+
+
 ## Windows setup
 
 Install Micromanager from official site and add `C:\Program Files\Micro-Manager-1.4` to PATH and PYTHONPATH system variable. After that you can simple import micromanager core:
@@ -22,16 +31,10 @@ I made [Archlinux PKGBUILD](https://aur.archlinux.org/packages/micromanager-git/
 
 See test snippet at the end of PKGBUILD.
 
-## Available samples
-
-* Getting list of available properties and allowed values
-* Video grabbing with opencv highgui
-* Efficient frame conversion with numpy (rgb32 to rgb, bgr)
-
 
 ## Issues
 
-*Memory requirements not adequate*
+### Memory requirements not adequate
 
     2014-02-11T14:36:41.328125 p:612 t:2300 [LOG] Error occurred. Device BaumerOptronic. Failed to initialize circular buffer - memory requirements not adequate.
     Traceback (most recent call last):[Decode error - output not utf-8]
@@ -40,15 +43,14 @@ See test snippet at the end of PKGBUILD.
         return _MMCorePy.CMMCore_startContinuousSequenceAcquisition(self, *args)
     MMCorePy.CMMError: Failed to initialize circular buffer - memory requirements not adequate.
 
-*Solution*
-
-Just increase circular buffer (60 megabytes works fine for me). According with mailing list 600-800-1200 MB for circular buffer is normal.
+**Solution**: Just increase circular buffer (60 megabytes works fine for me). According with mailing list 600-800-1200 MB for circular buffer is normal.
 
     mmc.setCircularBufferMemoryFootprint(60)
 
-*ROI*
 
-It is the Baumer optronics adapter bug. If you try adjust ROI with `mmc.setROI(x, y, width, height)`, and then run continuous acquisition, script falls with  exception:
+### ROI
+
+It is the Baumer optronics adapter bug. If you try adjust *region of interest* (ROI) with `mmc.setROI(x, y, width, height)`, and then run continuous acquisition, script falls with this exception:
 
     Traceback (most recent call last):
       File "C:\Anaconda\radioxoma\mm_live_video.py", line 40, in <module>
@@ -68,19 +70,15 @@ I assume circular buffer initialized with wrong frame size (differ from current 
 
     MMCorePy.CMMError: InsertImage failed with errorcode: 31
 
-*Solution*
-
-Put mmc.snapImage() before mmc.startContinuousSequenceAcquisition(1)
-Seems to be, adapter should initialize it automatically. I also tried with `mmc.initializeCircularBuffer()` without success.
+**Solution**: Put `mmc.snapImage()` before `mmc.startContinuousSequenceAcquisition(1)`.
+Seems to be, baumer adapter should initialize it automatically (but it does not). I also tried with `mmc.initializeCircularBuffer()` without success.
 
 
-*Circular buffer is empty.*
+### Circular buffer is empty
 
-mmc.popNextImage() and mmc.getLastImage() returns exception while circular buffer is empty.
+`mmc.popNextImage()` and `mmc.getLastImage()` raises exception while circular buffer is empty.
 
-*Solution*
-
-Check buffer for image count. (See the samples.)
+**Solution**: Check buffer for image count. (See the samples.)
 
     if mmc.getRemainingImageCount() > 0:
         rgb32 = mmc.popNextImage()
