@@ -41,11 +41,13 @@ See test snippet at the end of PKGBUILD.
     MMCorePy.CMMError: Failed to initialize circular buffer - memory requirements not adequate.
 
 *Solution*
+
 Just increase circular buffer (60 megabytes works fine for me). According with mailing list 600-800-1200 MB for circular buffer is normal.
 
     mmc.setCircularBufferMemoryFootprint(60)
 
 *ROI*
+
 It is the Baumer optronics adapter bug. If you try adjust ROI with `mmc.setROI(x, y, width, height)`, and then run continuous acquisition, script falls with  exception:
 
     Traceback (most recent call last):
@@ -67,14 +69,17 @@ I assume circular buffer initialized with wrong frame size (differ from current 
     MMCorePy.CMMError: InsertImage failed with errorcode: 31
 
 *Solution*
+
 Put mmc.snapImage() before mmc.startContinuousSequenceAcquisition(1)
 Seems to be, adapter should initialize it automatically. I also tried with `mmc.initializeCircularBuffer()` without success.
 
 
 *Circular buffer is empty.*
+
 mmc.popNextImage() and mmc.getLastImage() returns exception while circular buffer is empty.
 
 *Solution*
+
 Check buffer for image count. (See the samples.)
 
     if mmc.getRemainingImageCount() > 0:
