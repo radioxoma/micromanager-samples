@@ -5,9 +5,9 @@ micromanager-samples
 
 Hello guys! Here are some demos for [Micro-manager](http://www.micro-manager.org) python interface.
 
-Micromanager project provides broad opportunity for constructing sophisticated image acquisition protocols (in microscopy, for example). It is possible to overreach vendor software limitation and realize your inherent researcher's freedom as far as possible.
+Micromanager project provides broad opportunity for constructing sophisticated image acquisition protocols (e.g. in microscopy). So it becomes possible to overreach vendor software limitation and realize your inherent researcher's freedom as far as possible.
 
-Unfortunately, MM documentation is lacks for detailed examples. It is not easy understand hardware capabilities and API logic. I hope those examples will be helpful in your journey, especially for live video acquisition.
+Unfortunately, MM documentation is lacks for detailed examples. It is not easy understand hardware capabilities and API logic. I hope those samples will be helpful in your journey, especially for live video acquisition.
 
 
 ### Available samples
@@ -71,12 +71,12 @@ I assume circular buffer initialized with wrong frame size (differ from current 
     MMCorePy.CMMError: InsertImage failed with errorcode: 31
 
 **Solution**: Put `mmc.snapImage()` before `mmc.startContinuousSequenceAcquisition(1)`.
-Seems to be, baumer adapter should initialize it automatically (but it does not). I also tried with `mmc.initializeCircularBuffer()` without success.
+Seems to be, baumer adapter should initialize it automatically, but it doesn't. I also tried with `mmc.initializeCircularBuffer()` without success.
 
 
 ### Circular buffer is empty
 
-`mmc.popNextImage()` and `mmc.getLastImage()` raises exception while circular buffer is empty.
+`mmc.popNextImage()` and `mmc.getLastImage()` both raises an exception while circular buffer is empty.
 
 **Solution**: Check buffer for image count. (See the samples.)
 
