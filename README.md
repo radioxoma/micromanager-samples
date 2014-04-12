@@ -1,4 +1,81 @@
 micromanager-samples
 ====================
 
-Python samples for Micro-Manager image acquisition system
+*Python samples for Micro-Manager image acquisition system*
+
+Hello guys! Here are some demos for [Micro-manager](http://www.micro-manager.org) python interface.
+
+Micromanager project provides broad opportunity for constructing sophisticated image acquisition protocols (in microscopy, for example). It is possible to overreach vendor software limitation and realize your inherent researcher's freedom as far as possible.
+
+Unfortunately, MM documentation is lacks for detailed examples. It is not easy understand hardware capabilities and API logic. I hope those examples will be helpful in your journey, especially for live video acquisition.
+
+
+## Windows setup
+
+Install Micromanager from official site and add `C:\Program Files\Micro-Manager-1.4` to PATH and PYTHONPATH system variable. After that you can simple import micromanager core:
+
+    import MMCorePy
+
+## Linux setup
+
+I made [Archlinux PKGBUILD](https://aur.archlinux.org/packages/micromanager-git/). Only MMCore and python 2 interface available.
+
+See test snippet at the end of PKGBUILD.
+
+## Available samples
+
+* Getting list of available properties and allowed values
+* Video grabbing with opencv highgui
+* Efficient frame conversion with numpy (rgb32 to rgb, bgr)
+
+
+## Issues
+
+*Memory requirements not adequate*
+
+    2014-02-11T14:36:41.328125 p:612 t:2300 [LOG] Error occurred. Device BaumerOptronic. Failed to initialize circular buffer - memory requirements not adequate.
+    Traceback (most recent call last):[Decode error - output not utf-8]
+        mmc.startContinuousSequenceAcquisition(1)
+      File "C:\Program Files\Micro-Manager-1.4\MMCorePy.py", line 4956, in startContinuousSequenceAcquisition
+        return _MMCorePy.CMMCore_startContinuousSequenceAcquisition(self, *args)
+    MMCorePy.CMMError: Failed to initialize circular buffer - memory requirements not adequate.
+
+*Solution*
+Just increase circular buffer (60 megabytes works fine for me). According with mailing list 600-800-1200 MB for circular buffer is normal.
+
+    mmc.setCircularBufferMemoryFootprint(60)
+
+*ROI*
+It is the Baumer optronics adapter bug. If you try adjust ROI with `mmc.setROI(x, y, width, height)`, and then run continuous acquisition, script falls with  exception:
+
+    Traceback (most recent call last):
+      File "C:\Anaconda\radioxoma\mm_live_video.py", line 40, in <module>
+        rgb32 = mmc.getLastImage()
+      File "C:\Program Files\Micro-Manager-1.4\MMCorePy.py", line 4952, in getLastImage
+        return _MMCorePy.CMMCore_getLastImage(self)
+    MMCorePy.CMMError: SendImageToCore failed with errorcode: 31
+    2014-03-12T18:48:43.156250 p:1604 t:2428 [dbg] Waiting for device Camera...
+    2014-03-12T18:48:43.156250 p:1604 t:2428 [dbg] Finished waiting.
+    2014-03-12T18:48:43.156250 p:1604 t:2428 [dbg] Device Camera debug message:  sending Exit command to implementation thread
+    2014-03-12T18:48:43.156250 p:1604 t:2428 [dbg] Device Camera debug message: deleting  BO camera implementation thread
+    2014-03-12T18:48:43.156250 p:1604 t:3992 [dbg] Device Camera debug message: Send termination request to BO acquisition thread
+    2014-03-12T18:48:43.156250 p:1604 t:3992 [dbg] Device Camera debug message: sent terminate request to BO acquisition thread
+    2014-03-12T18:48:43.156250 p:1604 t:3992 [dbg] Device Camera debug message: BO acquisition thread terminated
+
+I assume circular buffer initialized with wrong frame size (differ from current ROI size) when continuous acquisition was started. So it is not possible insert new frames. Sometimes raises other exception (in version 1.4.13):
+
+    MMCorePy.CMMError: InsertImage failed with errorcode: 31
+
+*Solution*
+Put mmc.snapImage() before mmc.startContinuousSequenceAcquisition(1)
+Seems to be, adapter should initialize it automatically. I also tried with `mmc.initializeCircularBuffer()` without success.
+
+
+*Circular buffer is empty.*
+mmc.popNextImage() and mmc.getLastImage() returns exception while circular buffer is empty.
+
+*Solution*
+Check buffer for image count. (See the samples.)
+
+    if mmc.getRemainingImageCount() > 0:
+        rgb32 = mmc.popNextImage()
