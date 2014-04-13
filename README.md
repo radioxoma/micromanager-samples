@@ -7,7 +7,7 @@ Hello guys! Here are some demos for [Micro-manager](http://www.micro-manager.org
 
 Micromanager project provides broad opportunity for constructing sophisticated image acquisition protocols (e.g. in microscopy). So it becomes possible to overreach vendor software limitation and realize your inherent researcher's freedom as far as possible.
 
-Unfortunately, MM documentation is lacks for detailed examples. It is not easy understand hardware capabilities and API logic. I hope those samples will be helpful in your journey, especially for live video acquisition.
+Unfortunately, micromanager documentation lacks for detailed examples. It is not easy to understand the hardware capabilities and API logic. I hope those samples will be helpful in your journey, especially for live video acquisition.
 
 
 ### Available samples
@@ -19,13 +19,15 @@ Unfortunately, MM documentation is lacks for detailed examples. It is not easy u
 * Efficient frame conversion with numpy (rgb32 to rgb, bgr)
 
 
-## Windows setup
+## Setup
+
+### Windows 
 
 Install Micromanager from official site and add `C:\Program Files\Micro-Manager-1.4` to PATH and PYTHONPATH system variable. After that you can simple import micromanager core:
 
     import MMCorePy
 
-## Linux setup
+### Linux
 
 I made [Archlinux PKGBUILD](https://aur.archlinux.org/packages/micromanager-git/). Only MMCore and python 2 interface available.
 
