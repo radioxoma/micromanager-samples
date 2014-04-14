@@ -19,18 +19,12 @@ DEVICE = ['Camera', 'DemoCamera', 'DCam']
 # DEVICE = ['Camera', "BaumerOptronic", "BaumerOptronic"]
 
 
-def set_mmc_resolution(mmc, width=None, height=None):
+def set_mmc_resolution(mmc, width, height):
     """Select rectangular ROI in center of the frame.
-
-    1600, 1200
-    1280, 1024
-    1024, 768
-    640, 480
     """
-    if width is not None and height is not None:
-        x = (mmc.getImageWidth() - width) / 2
-        y = (mmc.getImageHeight() - height) / 2
-        mmc.setROI(x, y, width, height)
+    x = (mmc.getImageWidth() - width) / 2
+    y = (mmc.getImageHeight() - height) / 2
+    mmc.setROI(x, y, width, height)
 
 
 def main():
@@ -39,14 +33,13 @@ def main():
     mmc = MMCorePy.CMMCore()
     mmc.enableStderrLog(False)
     mmc.enableDebugLog(False)
-    mmc.setCircularBufferMemoryFootprint(60)
+    # mmc.setCircularBufferMemoryFootprint(100)
     mmc.loadDevice(*DEVICE)
     mmc.initializeDevice(DEVICE[0])
     mmc.setCameraDevice(DEVICE[0])
     mmc.setProperty(DEVICE[0], 'PixelType', '32bitRGB')
 
     cv2.namedWindow('MM controls')
-    cv2.namedWindow('Video')
     if mmc.hasProperty(DEVICE[0], 'Gain'):
         cv2.createTrackbar(
             'Gain', 'MM controls',
@@ -62,11 +55,11 @@ def main():
 
     set_mmc_resolution(mmc, WIDTH, HEIGHT)
     mmc.snapImage()  # Baumer workaround
+    cv2.namedWindow('Video')
     mmc.startContinuousSequenceAcquisition(1)
     while True:
         remcount = mmc.getRemainingImageCount()
         print('Images in circular buffer: %s') % remcount
-
         if remcount > 0:
             # rgb32 = mmc.popNextImage()
             rgb32 = mmc.getLastImage()
@@ -77,10 +70,9 @@ def main():
             print('No frame')
         if cv2.waitKey(5) >= 0:
             break
-
+    cv2.destroyAllWindows()
     mmc.stopSequenceAcquisition()
     mmc.reset()
-    cv2.destroyAllWindows()
 
 
 if __name__ == '__main__':
