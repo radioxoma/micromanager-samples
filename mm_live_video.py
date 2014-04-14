@@ -17,16 +17,15 @@ DEVICE = ['Camera', 'DemoCamera', 'DCam']
 # DEVICE = ['Camera', "BaumerOptronic", "BaumerOptronic"]
 
 
-mmc = MMCorePy.CMMCore()
-mmc.enableStderrLog(False)
-mmc.enableDebugLog(False)
-# mmc.setCircularBufferMemoryFootprint(100)
-mmc.loadDevice(*DEVICE)
-mmc.initializeDevice(DEVICE[0])
-mmc.setCameraDevice(DEVICE[0])
-mmc.setProperty(DEVICE[0], 'PixelType', '32bitRGB')
-
 if __name__ == '__main__':
+    mmc = MMCorePy.CMMCore()
+    mmc.enableStderrLog(False)
+    mmc.enableDebugLog(False)
+    # mmc.setCircularBufferMemoryFootprint(100)
+    mmc.loadDevice(*DEVICE)
+    mmc.initializeDevice(DEVICE[0])
+    mmc.setCameraDevice(DEVICE[0])
+    mmc.setProperty(DEVICE[0], 'PixelType', '32bitRGB')
     mmc.startContinuousSequenceAcquisition(1)
     cv2.namedWindow('Video')
     while True:
