@@ -84,3 +84,18 @@ Seems to be, baumer adapter should initialize it automatically, but it doesn't. 
 
     if mmc.getRemainingImageCount() > 0:
         rgb32 = mmc.popNextImage()
+
+
+## Snippets
+
+    def rgb32asrgb(rgb32):
+        """View RGB32 as RGB array (no copy).
+
+        low memory address    ---->      high memory address
+        | pixel | pixel | pixel | pixel | pixel | pixel |...
+        |-------|-------|-------|-------|-------|-------|...
+        |B|G|R|A|B|G|R|A|B|G|R|A|B|G|R|A|B|G|R|A|B|G|R|A|...
+        http://avisynth.nl/index.php/RGB32
+        """
+        return rgb32.view(dtype=np.uint8).reshape(
+            rgb32.shape[0], rgb32.shape[1], 4)[...,2::-1]
