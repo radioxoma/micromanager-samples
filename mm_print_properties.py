@@ -30,10 +30,31 @@ print("User '%s' on host '%s'") % (mmc.getUserId(), mmc.getHostName())
 print('getVersionInfo: %s') % mmc.getVersionInfo()
 print('getAPIVersionInfo: %s') % mmc.getAPIVersionInfo()
 print('getDeviceType: %s') % mmc.getDeviceType(devlabel)
+print('getDeviceDescription: %s') % mmc.getDeviceDescription(devlabel)
+print('getDeviceLibrary: %s') % mmc.getDeviceLibrary(devlabel)
 print('getPixelSizeUm: %s') % mmc.getPixelSizeUm()
 
+# Too verbose output.
 #-------------------------------------
-print('\n\t* Getting property list *')
+print("\n\t* Libraries & devices *")
+#-------------------------------------
+print('getDeviceAdapterSearchPaths: %s') % ''.join(mmc.getDeviceAdapterSearchPaths())
+for libname in mmc.getDeviceAdapterNames():
+    try:
+        # Get available devices from the specified device library.
+        print("'%s':\t%s") % (libname, mmc.getAvailableDevices(libname))
+    except MMCorePy.CMMError:
+        print("'%s':\tWon't work") % libname
+    
+    # try:
+    #     # Available if device is loaded.
+    #     for dev in mmc.getAvailableDevices(libname):
+    #         print('getDeviceDescription: %s', mmc.getDeviceDescription(dev))
+    # except MMCorePy.CMMError:
+    #     print('No DeviceDescription')
+
+#-------------------------------------
+print("\n\t* Getting '%s' property list *") % devlabel
 #-------------------------------------
 proptyple = mmc.getDevicePropertyNames(devlabel)
 for prop in proptyple:
