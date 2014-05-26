@@ -1,9 +1,7 @@
 micromanager-samples
 ====================
 
-*Python samples for Micro-Manager image acquisition system*
-
-Hello guys! Here are some demos for [Micro-manager](http://www.micro-manager.org) python interface.
+*Python code samples for [Micro-manager](http://www.micro-manager.org) image acquisition system*
 
 Micromanager project provides broad opportunity for constructing sophisticated image acquisition protocols (e.g. in microscopy). So it becomes possible to overreach vendor software limitation and realize your inherent researcher's freedom as far as possible.
 
