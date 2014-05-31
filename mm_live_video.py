@@ -12,8 +12,8 @@ import numpy as np
 import cv2
 import MMCorePy
 
-DEVICE = ['Camera', 'DemoCamera', 'DCam']
-# DEVICE = ['Camera', 'OpenCVgrabber', 'OpenCVgrabber']
+# DEVICE = ['Camera', 'DemoCamera', 'DCam']
+DEVICE = ['Camera', 'OpenCVgrabber', 'OpenCVgrabber']
 # DEVICE = ['Camera', "BaumerOptronic", "BaumerOptronic"]
 
 
