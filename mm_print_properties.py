@@ -5,7 +5,7 @@
 Created on 19 Jan. 2014.
 @author: Eugene Dvoretsky
 
-Print available camera properties with Micromanager interface.
+Discovery MMCore properties.
 """
 
 import MMCorePy
@@ -25,7 +25,13 @@ mmc.setCameraDevice(devlabel)
 
 sleep(1)  # I don't want synchronize threads.
 
-print('\n\t* Common information *')
+print(
+    """
+    -----------------------------------------------------------------------
+                            Common information
+    -----------------------------------------------------------------------
+    """)
+
 print("User '%s' on host '%s'") % (mmc.getUserId(), mmc.getHostName())
 print('getVersionInfo: %s') % mmc.getVersionInfo()
 print('getAPIVersionInfo: %s') % mmc.getAPIVersionInfo()
@@ -35,9 +41,14 @@ print('getDeviceLibrary: %s') % mmc.getDeviceLibrary(devlabel)
 print('getPixelSizeUm: %s') % mmc.getPixelSizeUm()
 
 # Too verbose output.
-#-------------------------------------
-print("\n\t* Libraries & devices *")
-#-------------------------------------
+
+print(
+    """
+    -----------------------------------------------------------------------
+                            Libraries & devices
+    -----------------------------------------------------------------------
+    """)
+
 print('getDeviceAdapterSearchPaths: %s') % ''.join(mmc.getDeviceAdapterSearchPaths())
 for libname in mmc.getDeviceAdapterNames():
     try:
@@ -45,7 +56,7 @@ for libname in mmc.getDeviceAdapterNames():
         print("'%s':\t%s") % (libname, mmc.getAvailableDevices(libname))
     except MMCorePy.CMMError:
         print("'%s':\tWon't work") % libname
-    
+
     # try:
     #     # Available if device is loaded.
     #     for dev in mmc.getAvailableDevices(libname):
@@ -53,35 +64,77 @@ for libname in mmc.getDeviceAdapterNames():
     # except MMCorePy.CMMError:
     #     print('No DeviceDescription')
 
-#-------------------------------------
-print("\n\t* Getting '%s' property list *") % devlabel
-#-------------------------------------
-proptyple = mmc.getDevicePropertyNames(devlabel)
-for prop in proptyple:
-    print("%s '%s' RO: %s" % (
-        prop,
-        mmc.getProperty(devlabel, prop),
-        mmc.isPropertyReadOnly(devlabel, prop)))
+#-------------------------------------------------------------------------------
+
+print(
+    """
+    -----------------------------------------------------------------------
+                        Getting '%s' property list
+    -----------------------------------------------------------------------
+    """ % devlabel)
+
+
+def get_prop_type(devlabel, prop):
+    """Not implemented in MMCorePy.
+    """
+    t = mmc.getPropertyType(devlabel, prop)
+    if t == 0:  # Undef probably
+        return None
+    elif t == 1:  # String
+        return str
+    elif t == 2:  # Float
+        return float
+    elif t == 3:  # Integer
+        return int
+    else:
+        raise ValueError("Unhandled property type '%s'" % t)
+
+
+def readFromCore(prop):
+    info = "%s: '%s'" % (prop, mmc.getProperty(devlabel, prop))
+
+    if mmc.isPropertyPreInit(devlabel, prop):
+        print('\tPropertyPreInit')
+    if mmc.isPropertySequenceable(devlabel, prop):
+        print('\tPropertySequenceable')
 
     if mmc.hasPropertyLimits(devlabel, prop):
-        print('hasPropertyLimits: %s to %s') % (
+        info += 'in range: %s - %s' % (
             mmc.getPropertyLowerLimit(devlabel, prop),
             mmc.getPropertyUpperLimit(devlabel, prop))
+    available_vals = ', '.join(mmc.getAllowedPropertyValues(devlabel, prop))
+    if available_vals:
+        info += " from {%s}" % available_vals
+    print(info)
+
+prop_ro = list()
+prop_ed = list()
+for prop in mmc.getDevicePropertyNames(devlabel):
+    if mmc.isPropertyReadOnly(devlabel, prop):
+        prop_ro.append(prop)
     else:
-        print("VALUES: " + ', '.join(mmc.getAllowedPropertyValues(devlabel, prop)))
+        prop_ed.append(prop)
+prop_ed.sort(key=lambda prop: mmc.getPropertyType(devlabel, prop))
 
-    if mmc.isPropertySequenceable(devlabel, prop):
-        print('PropertySequenceable')
-    if mmc.isPropertyPreInit(devlabel, prop):
-        print('PropertyPreInit')
+print(
+    """
+                        * Read-only properties *
+    """)
+for prop in prop_ro:
+    readFromCore(prop)
 
-    print('')
+print(
+    """
+                        * Mutable properties *
+    """)
+for prop in prop_ed:
+    readFromCore(prop)
 
 
-#-----------------------------------
-print('\t* Frame parameters *')
-#-----------------------------------
-
+print(
+    """
+                        * Frame parameters *
+    """)
 # Image buffer size.
 print('Width %d, Height %d') % (mmc.getImageWidth(), mmc.getImageHeight())
 print('getROI', mmc.getROI())
@@ -92,9 +145,11 @@ print('getBytesPerPixel: %s') % mmc.getBytesPerPixel()
 print('getImageBitDepth: %s') % mmc.getImageBitDepth()
 
 
-#-----------------------------------
-print('\n\t* Test acquisition *')
-#-----------------------------------
+print(
+    """
+                        * Acquisition test *
+    """)
+
 mmc.startContinuousSequenceAcquisition(1)
 # Видимо буфер инициализируется только при захвате.
 print('getBufferTotalCapacity: %s') % mmc.getBufferTotalCapacity()
@@ -105,17 +160,18 @@ mmc.setProperty(devlabel, 'Exposure', 15)
 print('getExposure %s') % mmc.getExposure()
 
 
-#-----------------------------------
-print('\n\t* Frame metadata *')
-#-----------------------------------
+print(
+    """
+                        * Frame metadata *
+    """)
 md = MMCorePy.Metadata()
 img = mmc.getLastImageMD(0, 0, md)
 # print(img.shape)
 print(md.Dump())
 
-
-#-------------------------
-print('\n\t* Reset all *')
-#-------------------------
+print(
+    """
+                        * Reset all *
+    """)
 mmc.stopSequenceAcquisition()
 mmc.reset()
