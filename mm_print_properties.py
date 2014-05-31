@@ -87,7 +87,7 @@ def get_prop_type(devlabel, prop):
     elif t == 3:  # Integer
         return int
     else:
-        raise ValueError("Unhandled property type '%s'" % t)
+        raise ValueError("Unexpected property type '%s'" % t)
 
 
 def readFromCore(prop):
@@ -99,9 +99,15 @@ def readFromCore(prop):
         print('\tPropertySequenceable')
 
     if mmc.hasPropertyLimits(devlabel, prop):
-        info += 'in range: %s - %s' % (
-            mmc.getPropertyLowerLimit(devlabel, prop),
-            mmc.getPropertyUpperLimit(devlabel, prop))
+        low = mmc.getPropertyLowerLimit(devlabel, prop)
+        up = mmc.getPropertyUpperLimit(devlabel, prop)
+        prop_type = get_prop_type(devlabel, prop)
+        if prop_type is float:
+            info += " in range: %s - %s" % (low, up)
+        elif prop_type is int:
+            info += " in steps between %s and %s" % (low, up)
+        else:
+            raise ValueError("Unexpected property type '%s'" % prop_type)
     available_vals = ', '.join(mmc.getAllowedPropertyValues(devlabel, prop))
     if available_vals:
         info += " from {%s}" % available_vals
@@ -137,7 +143,7 @@ print(
     """)
 # Image buffer size.
 print('Width %d, Height %d') % (mmc.getImageWidth(), mmc.getImageHeight())
-print('getROI', mmc.getROI())
+print('getROI [%s]') % ', '.join([str(k) for k in mmc.getROI()])
 
 # 32 MByte by default?
 # GetImageBufferSize() = img_.Width() * img_.Height() * GetImageBytesPerPixel()
