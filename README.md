@@ -21,7 +21,7 @@ Unfortunately, micromanager documentation lacks for detailed examples. It is not
 
 ### Windows 
 
-Install Micromanager from official site and add `C:\Program Files\Micro-Manager-1.4` to PATH and PYTHONPATH system variable. After that you can simple import micromanager's core:
+Install Micromanager from official site and add `C:\Program Files\Micro-Manager-1.4` to PYTHONPATH system variable. After that you can simple import micromanager's core:
 
     import MMCorePy
 
