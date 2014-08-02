@@ -50,6 +50,8 @@ See test snippet at the end of PKGBUILD.
 
 ### ROI
 
+>FIXED IN BULDS AFTER 2014-07-29 (rev 13932)
+
 It is the Baumer optronics adapter bug. If you try adjust *region of interest* (ROI) with `mmc.setROI(x, y, width, height)`, and then run continuous acquisition, script falls with this exception:
 
     Traceback (most recent call last):
