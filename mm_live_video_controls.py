@@ -54,7 +54,6 @@ def main():
             lambda value: mmc.setProperty(DEVICE[0], 'Exposure', int(value)))
 
     set_mmc_resolution(mmc, WIDTH, HEIGHT)
-    mmc.snapImage()  # Baumer workaround
     cv2.namedWindow('Video')
     mmc.startContinuousSequenceAcquisition(1)
     while True:

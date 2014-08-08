@@ -78,9 +78,6 @@ def main():
         frameSize=(mmc.getImageWidth(), mmc.getImageHeight()),
         isColor=True)
     assert(out.isOpened())
-    mmc.snapImage()  # Baumer workaround
-    # mmc.updateCoreProperties()
-    # mmc.initializeCircularBuffer()
     mmc.startContinuousSequenceAcquisition(1)
     while True:
         if mmc.isBufferOverflowed():
