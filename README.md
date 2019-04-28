@@ -73,7 +73,7 @@ See test snippet at the end of the PKGBUILD.
             rgb32.shape[0], rgb32.shape[1], 4)[...,2::-1]
 
 
-## Futher reading
+## Further reading
 
-* [Micro-Manager_python_library](https://micro-manager.org/wiki/Using_the_Micro-Manager_python_library)
+* [Micro-Manager python library](https://micro-manager.org/wiki/Using_the_Micro-Manager_python_library)
 * [Immunopy](https://github.com/radioxoma/immunopy) - an Micro-manager based application
