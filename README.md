@@ -14,21 +14,22 @@ Unfortunately, micromanager documentation lacks for detailed examples. It is not
 * Getting list of available properties and their allowed values
 * Video grabbing with opencv highgui
 * Efficient frame conversion with numpy (rgb32 to rgb, bgr)
+* Qt GUI (property browser)
 
 
 ## Setup
 
 ### Windows 
 
-Install Micromanager from official site and add `C:\Program Files\Micro-Manager-1.4` to PYTHONPATH system variable. After that you can simple import micromanager's core:
+Install Micromanager from official website and add `C:\Program Files\Micro-Manager-1.4` to PYTHONPATH system variable. After that you can simple import micromanager's core:
 
     import MMCorePy
 
 ### Linux
 
-I made [Archlinux PKGBUILD](https://aur.archlinux.org/packages/micromanager-git/). Only MMCore and python 2 interface available.
+I made [Archlinux PKGBUILD](https://aur.archlinux.org/packages/micromanager-git/). Only MMCore and python2 interfaces available.
 
-See test snippet at the end of PKGBUILD.
+See test snippet at the end of the PKGBUILD.
 
 
 ## Issues
@@ -42,7 +43,7 @@ See test snippet at the end of PKGBUILD.
         return _MMCorePy.CMMCore_startContinuousSequenceAcquisition(self, *args)
     MMCorePy.CMMError: Failed to initialize circular buffer - memory requirements not adequate.
 
-**Solution**: Just increase circular buffer (60 megabytes works fine for me). According with mailing list 600-800-1200 MB for circular buffer is normal.
+**Solution**: Just increase circular buffer size (60 megabytes works fine for me). According with mailing list 600-800-1200 MB for circular buffer is normal.
 
     mmc.setCircularBufferMemoryFootprint(60)
 
@@ -51,7 +52,7 @@ See test snippet at the end of PKGBUILD.
 
 `mmc.popNextImage()` and `mmc.getLastImage()` both raises an exception while circular buffer is empty.
 
-**Solution**: Check buffer for image count. (See the samples.)
+**Solution**: Check buffer for image count.
 
     if mmc.getRemainingImageCount() > 0:
         rgb32 = mmc.popNextImage()
@@ -60,7 +61,7 @@ See test snippet at the end of PKGBUILD.
 ## Snippets
 
     def rgb32asrgb(rgb32):
-        """View RGB32 as RGB array (no copy).
+        """View RGB32 as RGB array (no copy, very fast).
 
         low memory address    ---->      high memory address
         | pixel | pixel | pixel | pixel | pixel | pixel |...
@@ -70,3 +71,9 @@ See test snippet at the end of PKGBUILD.
         """
         return rgb32.view(dtype=np.uint8).reshape(
             rgb32.shape[0], rgb32.shape[1], 4)[...,2::-1]
+
+
+## Futher reading
+
+* [Micro-Manager_python_library](https://micro-manager.org/wiki/Using_the_Micro-Manager_python_library)
+* [Immunopy](https://github.com/radioxoma/immunopy) - an Micro-manager based application
