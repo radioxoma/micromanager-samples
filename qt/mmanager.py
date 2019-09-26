@@ -3,7 +3,6 @@
 
 """
 Created on 2014-07-03
-
 @author: Eugene Dvoretsky
 
 Qt-based Micromanager property browser. Taken from my
