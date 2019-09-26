@@ -9,12 +9,11 @@ Unfortunately, micromanager documentation lacks for detailed examples. It is not
 
 ### Available samples
 
-[Numpy](http://www.scipy.org/index.html), [opencv](http://opencv.org) are used here.
-
 * Getting list of available properties and their allowed values
-* Video grabbing with opencv highgui
-* Efficient frame conversion with numpy (rgb32 to rgb, bgr)
+* Video grabbing with [opencv](http://opencv.org) highgui
+* Efficient frame conversion with [Numpy](http://www.scipy.org/index.html) (rgb32 to rgb, bgr)
 * Qt GUI (property browser)
+* OpenGL context for efficient video output
 
 
 ## Setup
@@ -27,7 +26,7 @@ Install Micromanager from official website and add `C:\Program Files\Micro-Manag
 
 ### Linux
 
-I made [Archlinux PKGBUILD](https://aur.archlinux.org/packages/micromanager-git/). Only MMCore and python2 interfaces available.
+I made [Archlinux PKGBUILD](https://aur.archlinux.org/packages/micromanager-git/).
 
 See test snippet at the end of the PKGBUILD.
 
@@ -76,4 +75,4 @@ See test snippet at the end of the PKGBUILD.
 ## Further reading
 
 * [Micro-Manager python library](https://micro-manager.org/wiki/Using_the_Micro-Manager_python_library)
-* [Immunopy](https://github.com/radioxoma/immunopy) - an Micro-manager based application
+* [Immunopy](https://github.com/radioxoma/immunopy) - an Micro-manager based application (python image processing with Qt, OpenCV, OpenGL, OpenCL)
